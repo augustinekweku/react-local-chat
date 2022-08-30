@@ -8,21 +8,15 @@ import {
 import Messenger from "./pages/Messenger/Messenger";
 
 export default function App() {
-  const user = localStorage.getItem("currentUser");
   return (
     <Router>
-        {user ? 
-        <>
+  
           <Routes>
-          <Route path="/" element={<Messenger />} />
+          <Route path="/home" element={<Messenger />} />
             <Route path="*" element={<Navigate to="/" />} />
-          </Routes>
-        </> :
-                  <Routes>
-                    <Route path="/login" element={<Login />} />
-                  <Route path="*" element={<Navigate to="/login" />} />
+          <Route path="/" element={<Login />} />
                 </Routes>
-        }
+      
     </Router>
   );
 }

@@ -23,20 +23,20 @@ const Login = () => {
       );
       if (userPresent) {
         localStorage.setItem("currentUser", JSON.stringify(newUser));
-        window.location.reload();
-        return;
-        // return alert(`User ${username.current.value} is already taken`);
+        // window.location.reload();
+        // return;
+        return alert(`User ${username.current.value} is already taken`);
       }
       parsedOldUsers.push(newUser);
       localStorage.setItem("users", JSON.stringify(parsedOldUsers));
       localStorage.setItem("currentUser", JSON.stringify(newUser));
-      window.location.reload();
+      navigate("/home");
     } else {
       let usersArray = [];
       usersArray.push(newUser);
       localStorage.setItem("users", JSON.stringify(usersArray));
       localStorage.setItem("currentUser", JSON.stringify(newUser));
-      window.location.reload();
+      navigate("/home");
     }
   };
 
