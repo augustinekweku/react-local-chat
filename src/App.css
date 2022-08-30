@@ -15,7 +15,7 @@
 }
 
 .chatBox {
-  flex: 5.5;
+  flex: 5;
 }
 
 .chatBoxWrapper {
@@ -55,7 +55,7 @@
 }
 
 .chatOnline {
-  flex: 3;
+  flex: 3.5;
 }
 
 .chatMenuWrapper,
@@ -67,8 +67,9 @@
 
 .noConversationText {
   position: absolute;
+  text-align: center;
   top: 10%;
-  font-size: 50px;
+  font-size: 30px;
   color: rgb(224, 220, 220);
   cursor: default;
 }
