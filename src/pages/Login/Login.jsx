@@ -2,10 +2,13 @@ import { useRef } from "react";
 import "./login.css";
 import { v4 as uuidv4 } from "uuid";
 import { Navigate, useNavigate } from "react-router-dom";
+import { setCurrentUser } from "../../redux/messagesRedux";
+import { useDispatch } from "react-redux";
 
 const Login = () => {
   const username = useRef();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleClick = (e) => {
     e.preventDefault();
@@ -30,12 +33,14 @@ const Login = () => {
       parsedOldUsers.push(newUser);
       localStorage.setItem("users", JSON.stringify(parsedOldUsers));
       localStorage.setItem("currentUser", JSON.stringify(newUser));
+      dispatch(setCurrentUser(newUser));
       navigate("/home");
     } else {
       let usersArray = [];
       usersArray.push(newUser);
       localStorage.setItem("users", JSON.stringify(usersArray));
       localStorage.setItem("currentUser", JSON.stringify(newUser));
+      dispatch(setCurrentUser(newUser));
       navigate("/home");
     }
   };

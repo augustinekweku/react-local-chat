@@ -10,14 +10,19 @@ function Messenger() {
   const [conversations, setConversations] = useState([]);
   const [currentChat, setCurrentChat] = useState(null);
   const [messages, setMessages] = useState([]);
+  const [messageLength, setMessageLength] = useState();
   const [newMessage, setNewMessage] = useState("");
   const [arrivalMessage, setArrivalMessage] = useState(null);
   const [onlineUsers, setOnlineUsers] = useState([]);
   const scrollRef = useRef();
   console.log(JSON.parse(localStorage.getItem("currentUser")).username);
-  const username = JSON.parse(localStorage.getItem("currentUser")).username;
+  const username = useSelector((state) => state.messages.currentUser.username);
   const stateMsgs = useSelector((state) => state.messages.messages);
   const dispatch = useDispatch();
+
+  //get the number of msgs from the local storage
+  let messagesInLocal = JSON.parse(localStorage.getItem("messages"));
+  console.log(messagesInLocal?.length);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -32,27 +37,34 @@ function Messenger() {
       messages.push(newMessageObj);
       console.log(messages);
       localStorage.setItem("messages", JSON.stringify(messages));
+      setMessageLength(JSON.parse(localStorage.getItem("messages")).length);
       dispatch(updateMessages(newMessageObj));
     } else {
       let firstMessage = [];
       firstMessage.push(newMessageObj);
       localStorage.setItem("messages", JSON.stringify(firstMessage));
+      setMessageLength(JSON.parse(localStorage.getItem("messages")).length);
       dispatch(updateMessages(newMessageObj));
     }
   };
 
   useEffect(() => {
-    let messages = JSON.parse(localStorage.getItem("messages"));
-    dispatch(setStoreMessages(messages));
-    console.log(stateMsgs);
-    if (messages) {
-      setMessages(messages);
-    }
+    const interval = setInterval(() => {
+      let messages = JSON.parse(localStorage.getItem("messages"));
+      if (messages) {
+        setMessages(messages);
+        setStoreMessages(messages);
+        console.log("messages", messages);
+      }
+      scrollRef.current?.scrollIntoView({ behavior: "smooth" });
+      console.log("testing timer");
+    }, 1000);
+    return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [stateMsgs]);
+  }, [messageLength]);
 
   return (
     <>
@@ -71,11 +83,12 @@ function Messenger() {
           <div className="chatBoxWrapper">
             <>
               <div className="chatBoxTop">
-                {stateMsgs.map((m) => (
-                  <div ref={scrollRef}>
-                    <Message message={m} own={m.sender === username} />
-                  </div>
-                ))}
+                {messages.length > 0 &&
+                  messages.map((m) => (
+                    <div ref={scrollRef}>
+                      <Message message={m} own={m.sender === username} />
+                    </div>
+                  ))}
               </div>
               <div className="chatBoxBottom">
                 <textarea

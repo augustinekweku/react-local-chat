@@ -1,9 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const messagesSlice = createSlice({
-    name: "messages",
+    name: "Messages Store",
     initialState: {
         messages: [],
+        currentUser: {}
       },
     reducers: {
         updateMessages: (state, action)=>{
@@ -11,10 +12,13 @@ const messagesSlice = createSlice({
         },
         setStoreMessages: (state, action)=>{
             state.messages = action.payload;
+        },
+        setCurrentUser: (state, action)=>{
+            state.currentUser = action.payload;
         }
 
     }
 })
 
-export const { updateMessages,setStoreMessages } = messagesSlice.actions;
+export const { updateMessages,setStoreMessages, setCurrentUser } = messagesSlice.actions;
 export default messagesSlice.reducer; 
