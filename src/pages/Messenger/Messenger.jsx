@@ -7,24 +7,18 @@ import { useDispatch, useSelector } from "react-redux";
 import { setStoreMessages, updateMessages } from "../../redux/messagesRedux";
 
 function Messenger() {
-  const [conversations, setConversations] = useState([]);
-  const [currentChat, setCurrentChat] = useState(null);
   const [messages, setMessages] = useState([]);
   const [messageLength, setMessageLength] = useState();
   const [newMessage, setNewMessage] = useState("");
-  const [arrivalMessage, setArrivalMessage] = useState(null);
-  const [onlineUsers, setOnlineUsers] = useState([]);
+
   const scrollRef = useRef();
-  console.log(JSON.parse(localStorage.getItem("currentUser")).username);
+  //console.log(JSON.parse(localStorage.getItem("currentUser")).username);
   const username = useSelector((state) => state.messages.currentUser.username);
   const stateMsgs = useSelector((state) => state.messages.messages);
   const dispatch = useDispatch();
 
-  //get the number of msgs from the local storage
-  let messagesInLocal = JSON.parse(localStorage.getItem("messages"));
-  console.log(messagesInLocal?.length);
-
   const handleSubmit = async (e) => {
+    setNewMessage("");
     e.preventDefault();
     const newMessageObj = {
       sender: JSON.parse(localStorage.getItem("currentUser")).username,
@@ -35,15 +29,14 @@ function Messenger() {
 
     if (messages) {
       messages.push(newMessageObj);
-      console.log(messages);
+      //console.log(messages);
       localStorage.setItem("messages", JSON.stringify(messages));
-      setMessageLength(JSON.parse(localStorage.getItem("messages")).length);
+      setMessages(messages);
       dispatch(updateMessages(newMessageObj));
     } else {
       let firstMessage = [];
       firstMessage.push(newMessageObj);
       localStorage.setItem("messages", JSON.stringify(firstMessage));
-      setMessageLength(JSON.parse(localStorage.getItem("messages")).length);
       dispatch(updateMessages(newMessageObj));
     }
   };
@@ -54,38 +47,26 @@ function Messenger() {
       if (messages) {
         setMessages(messages);
         setStoreMessages(messages);
-        console.log("messages", messages);
+        scrollRef.current?.scrollIntoView({ behavior: "smooth" });
+        //console.log("messages", messages);
       }
-      scrollRef.current?.scrollIntoView({ behavior: "smooth" });
-      console.log("testing timer");
-    }, 1000);
+    }, 500);
     return () => clearInterval(interval);
   }, []);
-
-  useEffect(() => {
-    scrollRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messageLength]);
 
   return (
     <>
       <Topbar />
 
       <div className="messenger">
-        <div className="chatMenu">
-          <div className="chatMenuWrapper">
-            <input placeholder="Search for friends" className="chatMenuInput" />
-            <div>
-              <Conversation />
-            </div>
-          </div>
-        </div>
+        <div className="chatMenu"></div>
         <div className="chatBox">
           <div className="chatBoxWrapper">
             <>
               <div className="chatBoxTop">
                 {messages.length > 0 &&
-                  messages.map((m) => (
-                    <div ref={scrollRef}>
+                  messages.map((m, i) => (
+                    <div key={i} ref={scrollRef}>
                       <Message message={m} own={m.sender === username} />
                     </div>
                   ))}

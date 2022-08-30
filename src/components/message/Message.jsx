@@ -11,7 +11,7 @@ export default function Message({ message, own }) {
         />
         <p className="messageText"> {message.text}</p>
       </div>
-      <div className="messageBottom"></div>
+      <div className="messageBottom">{message.sender}</div>
     </div>
   );
 }
