@@ -3,6 +3,8 @@ import Topbar from "../../components/topbar/Topbar";
 import Message from "../../components/message/Message";
 import Conversation from "../../components/conversations/Conversation";
 import { useEffect, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { setStoreMessages, updateMessages } from "../../redux/messagesRedux";
 
 function Messenger() {
   const [conversations, setConversations] = useState([]);
@@ -14,6 +16,8 @@ function Messenger() {
   const scrollRef = useRef();
   console.log(JSON.parse(localStorage.getItem("currentUser")).username);
   const username = JSON.parse(localStorage.getItem("currentUser")).username;
+  const stateMsgs = useSelector((state) => state.messages.messages);
+  const dispatch = useDispatch();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -23,23 +27,32 @@ function Messenger() {
       createdAt: Date.now(),
     };
     let messages = JSON.parse(localStorage.getItem("messages"));
+
     if (messages) {
       messages.push(newMessageObj);
       console.log(messages);
       localStorage.setItem("messages", JSON.stringify(messages));
+      dispatch(updateMessages(newMessageObj));
     } else {
       let firstMessage = [];
       firstMessage.push(newMessageObj);
       localStorage.setItem("messages", JSON.stringify(firstMessage));
+      dispatch(updateMessages(newMessageObj));
     }
   };
 
   useEffect(() => {
     let messages = JSON.parse(localStorage.getItem("messages"));
+    dispatch(setStoreMessages(messages));
+    console.log(stateMsgs);
     if (messages) {
       setMessages(messages);
     }
   }, []);
+
+  useEffect(() => {
+    scrollRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [stateMsgs]);
 
   return (
     <>
@@ -58,7 +71,7 @@ function Messenger() {
           <div className="chatBoxWrapper">
             <>
               <div className="chatBoxTop">
-                {messages.map((m) => (
+                {stateMsgs.map((m) => (
                   <div ref={scrollRef}>
                     <Message message={m} own={m.sender === username} />
                   </div>
